@@ -1,10 +1,14 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:glass/glass.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musicoo/controll/musicController.dart';
+import 'package:musicoo/main.dart';
+import 'package:musicoo/service/audioServices.dart';
 import 'package:musicoo/view/widget/customButton.dart';
 import 'package:provider/provider.dart';
+import 'package:rxdart/rxdart.dart';
 
 class bottomBar extends StatefulWidget {
   const bottomBar({Key? key}) : super(key: key);
@@ -17,13 +21,19 @@ class _bottomBarState extends State<bottomBar> {
   @override
   Widget build(BuildContext context) {
     var deviceSize = MediaQuery.of(context).size;
-    bool isplaying = Provider.of<musicController>(context).isPlaying();
     AudioPlayer audioPlayer = Provider.of<musicController>(context).audioPlayer;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        StreamBuilder(
+          stream: _mediaStateStream,
+          
+          builder:(context, snapshot) {
+            String songTitle=snapshot.hasData?snapshot.data!.mediaItem!.title:"";
+            return Text(songTitle);
+          } , ),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+         mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             customButton(
               icon: Icon(
@@ -36,27 +46,33 @@ class _bottomBarState extends State<bottomBar> {
                     .previousSong();
               },
             ),
-            customButton(
-              icon: isplaying
-                  ? Icon(
-                      Icons.pause,
-                      size: 70,
-                      color: Colors.white,
-                    )
-                  : Icon(
-                      Icons.play_arrow,
-                      size: 70,
-                      color: Colors.white,
-                    ),
-              onPressed: () {
-                if (isplaying) {
-                  Provider.of<musicController>(context, listen: false)
-                      .pauseSong();
-                } else {
-                  Provider.of<musicController>(context, listen: false)
-                      .contiueSong();
-                }
-              },
+            StreamBuilder(
+              stream: myHandler.playbackState
+                  .map((state) => state.playing)
+                  .distinct(),
+              builder:(context, snapshot) {
+                 return customButton(
+                icon: snapshot.data??false
+                    ? Icon(
+                        Icons.pause,
+                        size: 70,
+                        color: Colors.white,
+                      )
+                    : Icon(
+                        Icons.play_arrow,
+                        size: 70,
+                        color: Colors.white,
+                      ),
+                onPressed: () {
+                  if (snapshot.data??false) {
+                   
+                    myHandler.pause();
+                  } else {
+                    
+                        myHandler.play();
+                  }
+                },
+              );}
             ),
             customButton(
               icon: Icon(
@@ -71,16 +87,15 @@ class _bottomBarState extends State<bottomBar> {
           ],
         ),
         StreamBuilder(
-            stream: audioPlayer.positionStream,
+            stream: _mediaStateStream,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
+                final mediaState = snapshot.data;
                 return ProgressBar(
-                  progress: Duration(
-                      milliseconds: snapshot.data?.inMilliseconds ?? 0),
-                  total: Duration(
-                      milliseconds: audioPlayer.duration?.inMilliseconds ?? 0),
+                  total: mediaState?.mediaItem?.duration ?? Duration.zero,
+                  progress: mediaState?.position ?? Duration.zero,
                   onSeek: (duration) {
-                    audioPlayer.seek(duration);
+                    myHandler.seek(duration);
                     print('User selected a new time: $duration');
                   },
                 );
@@ -91,4 +106,10 @@ class _bottomBarState extends State<bottomBar> {
       ],
     );
   }
+
+  Stream<MediaState> get _mediaStateStream =>
+      Rx.combineLatest2<MediaItem?, Duration, MediaState>(
+          myHandler.mediaItem,
+          AudioService.position,
+          (mediaItem, position) => MediaState(mediaItem, position));
 }

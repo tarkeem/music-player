@@ -9,13 +9,17 @@ class customButton extends StatelessWidget {
   void Function()? onPressed;
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.transparent,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-      elevation: 20,
-      child: Container(
-        child: IconButton(onPressed: onPressed, icon: icon),
-      ).asGlass(clipBorderRadius: BorderRadius.circular(30)),
+    return GestureDetector(
+      onTap: onPressed,
+      child: Card(
+        color: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        elevation: 20,
+        child: Container(
+          padding: EdgeInsets.all(20),
+          child: icon,
+        ).asGlass(clipBorderRadius: BorderRadius.circular(30)),
+      ),
     );
   }
 }

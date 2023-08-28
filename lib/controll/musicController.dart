@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musicoo/main.dart';
-import 'package:musicoo/services/audioServices.dart';
+import 'package:musicoo/service/audioServices.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
 class musicController extends ChangeNotifier
@@ -49,8 +49,31 @@ return;
       }
 
   }
+
+  List<SongModel>searchSong(String ch)
+  {
+    
+    var searchedSong= songs.where((element) => element.title.toUpperCase().startsWith(ch.toUpperCase())).toList();
+  
+  if(searchedSong.length>10)
+  {
+    return searchedSong.sublist(0,10);
+  }
+  else
+  {
+    return searchedSong;
+  }
+  
+  }
   //--------------------------------------------------------------
   var audioPlayer=AudioPlayer();
+  
+  
+  loadSongs()
+  {
+    var allSongs=ConcatenatingAudioSource(children: []);
+  }
+  
   playSong()
   {
     audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(currentSong.uri!),));
