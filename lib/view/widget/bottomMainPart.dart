@@ -1,13 +1,9 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:glass/glass.dart';
-import 'package:just_audio/just_audio.dart';
-import 'package:musicoo/controll/musicController.dart';
 import 'package:musicoo/main.dart';
 import 'package:musicoo/service/audioServices.dart';
 import 'package:musicoo/view/widget/customButton.dart';
-import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 
 class bottomBar extends StatefulWidget {
@@ -21,7 +17,7 @@ class _bottomBarState extends State<bottomBar> {
   @override
   Widget build(BuildContext context) {
     var deviceSize = MediaQuery.of(context).size;
-    AudioPlayer audioPlayer = Provider.of<musicController>(context).audioPlayer;
+    
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -42,8 +38,7 @@ class _bottomBarState extends State<bottomBar> {
                 color: Colors.white,
               ),
               onPressed: () {
-                Provider.of<musicController>(context, listen: false)
-                    .previousSong();
+               myHandler.skipToPrevious();
               },
             ),
             StreamBuilder(
@@ -81,7 +76,7 @@ class _bottomBarState extends State<bottomBar> {
                 color: Colors.white,
               ),
               onPressed: () {
-                Provider.of<musicController>(context, listen: false).nextSong();
+              myHandler.skipToNext();
               },
             ),
           ],

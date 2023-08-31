@@ -71,7 +71,18 @@ class mainScreen extends StatelessWidget {
                       itemContainer(
                         color: const Color.fromARGB(255, 0, 0, 0),
                         icon: Icon(Icons.favorite,color: Colors.red,),
-                        onTap: () {},
+                        onTap: () {
+                           Navigator.of(context).push(PageRouteBuilder(
+                            transitionDuration: Duration(milliseconds: 500),
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) =>
+                                      SlideTransition(
+                                        child: favouriteScreen(),
+                                          position: Tween<Offset>(
+                                                  begin: Offset(1, 0),
+                                                  end: Offset(0, 0))
+                                              .animate(animation))));
+                        },
                         text: 'Favourite',
                       )
                     ],

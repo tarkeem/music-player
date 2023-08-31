@@ -1,7 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
-import 'package:musicoo/main.dart';
-import 'package:musicoo/service/audioServices.dart';
+import 'package:musicoo/controll/sqfliteHelper.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
 class musicController extends ChangeNotifier
@@ -15,10 +15,10 @@ class musicController extends ChangeNotifier
     notifyListeners();
   }
 
-
+final OnAudioQuery _audioQuery = OnAudioQuery();
   fetchSongs()async
   {
-    final OnAudioQuery _audioQuery = OnAudioQuery();
+    
     List<SongModel> audios=await _audioQuery.querySongs();
 
       songs=audios.where((element) {
@@ -27,6 +27,12 @@ class musicController extends ChangeNotifier
       print(songs.length);
 
       setSong(songs[2]);
+  }
+  Future<Uint8List?> fetchSongArtWork(int songId)async
+  {
+  Uint8List? res= await  _audioQuery.queryArtwork(songId, ArtworkType.AUDIO);
+  return res;
+
   }
 
   requestPermission()async
@@ -65,8 +71,42 @@ return;
   }
   
   }
+
+
+
+  
+
+ static List<SongModel> favouritrIdSong=[];
+  
+
+Future<void>insertSong(String id)async
+{
+var res = await sqlHelper().insertDb("INSERT INTO favouritesongs VALUES ($id);");
+print(res);
+}
+Future<void>deleteSong()async
+{
+sqlHelper().deleteDb("");
+}
+Future fetchFavourite()async
+{
+ List<Map> res=await sqlHelper().selectDb("SELECT * FROM favouritesongs; ");
+
+  res.forEach((element) {
+    SongModel favsong= songs.firstWhere((so) =>so.id==int.parse(element['songid']) );
+    favouritrIdSong.add(favsong);
+  });
+//print(favouritrIdSong.toString());
+ 
+}
+bool isFavourite(SongModel song)
+{
+  return favouritrIdSong.contains(song);
+}
+
+
   //--------------------------------------------------------------
-  var audioPlayer=AudioPlayer();
+ /* var audioPlayer=AudioPlayer();
   
   
   loadSongs()
@@ -120,6 +160,6 @@ notifyListeners();
   seekSong(Duration pos)
   {
     audioPlayer.seek(pos);
-  }
+  }*/
 
 }

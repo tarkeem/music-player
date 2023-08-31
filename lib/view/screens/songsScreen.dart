@@ -1,18 +1,13 @@
 import 'dart:async';
 import 'package:audio_service/audio_service.dart';
-import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:glass/glass.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:musicoo/controll/musicController.dart';
 import 'package:musicoo/main.dart';
-import 'package:musicoo/service/audioServices.dart';
 import 'package:musicoo/view/widget/bottomMainPart.dart';
 import 'package:musicoo/view/widget/soundCard.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:provider/provider.dart';
 
 class songsScreen extends StatefulWidget {
   const songsScreen({super.key});
