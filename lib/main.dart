@@ -28,6 +28,7 @@ Future<void> main() async {
  await musicController().requestPermission();
  await sqlHelper().initiateDb();
  await musicController().fetchSongs();
+ await musicController().fetchFavourite();
  
 myHandler= await initAudioService();
   runApp(const MyApp()); 

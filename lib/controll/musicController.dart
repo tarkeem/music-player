@@ -1,13 +1,17 @@
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:musicoo/controll/sqfliteHelper.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 class musicController extends ChangeNotifier
 {
   static List<SongModel> songs=[];
   late SongModel currentSong;
+
+ static bool loadedSongQue=false;
 
   setSong(SongModel song)
   {
@@ -28,6 +32,23 @@ final OnAudioQuery _audioQuery = OnAudioQuery();
 
       setSong(songs[2]);
   }
+  
+  
+
+List<SongModel> randomSong()
+{
+  List<SongModel> randSong=[];
+  var rand=Random();
+  for(int i=0;i<5;i++)
+  {
+    randSong.add(songs[rand.nextInt(songs.length)]);
+  }
+  return randSong;
+
+}
+
+
+
   Future<Uint8List?> fetchSongArtWork(int songId)async
   {
   Uint8List? res= await  _audioQuery.queryArtwork(songId, ArtworkType.AUDIO);
@@ -79,14 +100,18 @@ return;
  static List<SongModel> favouritrIdSong=[];
   
 
-Future<void>insertSong(String id)async
+Future<void>insertSong(SongModel song)async
 {
-var res = await sqlHelper().insertDb("INSERT INTO favouritesongs VALUES ($id);");
+var res = await sqlHelper().insertDb("INSERT INTO favouritesongs VALUES (${song.id});");
+favouritrIdSong.add(song);
 print(res);
+notifyListeners();
 }
-Future<void>deleteSong()async
+Future<void>deleteSong(SongModel song)async
 {
-sqlHelper().deleteDb("");
+sqlHelper().deleteDb("DELETE FROM favouritesongs WHERE songid=${song.id};");
+favouritrIdSong.remove(song);
+notifyListeners();
 }
 Future fetchFavourite()async
 {

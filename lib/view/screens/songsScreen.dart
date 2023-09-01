@@ -35,7 +35,17 @@ class _songsScreenState extends State<songsScreen> {
   void initState() {
     timerfun();
 
-    myHandler.addQueueItems(songs.map((e) => MediaItem(id: e.uri!, title: e.title,duration: Duration(milliseconds: e.duration!))).toList());
+if(!musicController.loadedSongQue)
+{ 
+  myHandler.addQueueItems(songs.map((e) => MediaItem(id: e.uri!, title: e.title,duration: Duration(milliseconds: e.duration!))).toList());
+  musicController.loadedSongQue=true;
+}
+
+  
+ 
+
+
+   
     super.initState();
   }
 
@@ -64,7 +74,7 @@ class _songsScreenState extends State<songsScreen> {
             },
           )),
           Align(
-            alignment: Alignment.center,
+            alignment: Alignment(0,- 0.5),
             child: Container(
               height: deviceSize.height * 0.5,
               width: deviceSize.width,

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:glass/glass.dart';
+import 'package:musicoo/controll/musicController.dart';
 import 'package:musicoo/view/screens/favouriteScreen.dart';
 import 'package:musicoo/view/screens/searchScreen.dart';
 import 'package:musicoo/view/screens/songsScreen.dart';
+import 'package:flutter_swiper_view/flutter_swiper_view.dart';
+import 'package:musicoo/view/widget/favouriteCard.dart';
+import 'package:provider/provider.dart';
 
 class mainScreen extends StatelessWidget {
   const mainScreen({super.key});
@@ -33,11 +37,11 @@ class mainScreen extends StatelessWidget {
                         icon: Icon(Icons.music_note),
                         onTap: () {
                           Navigator.of(context).push(PageRouteBuilder(
-                            transitionDuration: Duration(milliseconds: 500),
+                              transitionDuration: Duration(milliseconds: 500),
                               pageBuilder:
                                   (context, animation, secondaryAnimation) =>
                                       SlideTransition(
-                                        child: songsScreen(),
+                                          child: songsScreen(),
                                           position: Tween<Offset>(
                                                   begin: Offset(1, 0),
                                                   end: Offset(0, 0))
@@ -50,17 +54,17 @@ class mainScreen extends StatelessWidget {
                         icon: Icon(Icons.search),
                         onTap: () {
                           Navigator.of(context).push(PageRouteBuilder(
-                            transitionDuration: Duration(milliseconds: 500),
+                              transitionDuration: Duration(milliseconds: 500),
                               pageBuilder:
                                   (context, animation, secondaryAnimation) =>
                                       SlideTransition(
-                                        child: searchScreen(),
+                                          child: searchScreen(),
                                           position: Tween<Offset>(
                                                   begin: Offset(1, 0),
                                                   end: Offset(0, 0))
                                               .animate(animation))));
                         },
-                        text: 'Search',
+                        text: 'Favourite',
                       ),
                       itemContainer(
                         color: Colors.black,
@@ -70,24 +74,40 @@ class mainScreen extends StatelessWidget {
                       ),
                       itemContainer(
                         color: const Color.fromARGB(255, 0, 0, 0),
-                        icon: Icon(Icons.favorite,color: Colors.red,),
+                        icon: Icon(
+                          Icons.favorite,
+                          color: Colors.red,
+                        ),
                         onTap: () {
-                           Navigator.of(context).push(PageRouteBuilder(
-                            transitionDuration: Duration(milliseconds: 500),
+                          Navigator.of(context).push(PageRouteBuilder(
+                              transitionDuration: Duration(milliseconds: 500),
                               pageBuilder:
                                   (context, animation, secondaryAnimation) =>
                                       SlideTransition(
-                                        child: favouriteScreen(),
+                                          child: favouriteScreen(),
                                           position: Tween<Offset>(
                                                   begin: Offset(1, 0),
                                                   end: Offset(0, 0))
                                               .animate(animation))));
                         },
-                        text: 'Favourite',
+                        text: 'Play List',
                       )
                     ],
                   )),
-              Expanded(flex: 1, child: Placeholder())
+              Expanded(
+                  flex: 1,
+                  child: Swiper(
+                    itemHeight: (deviceSize.height * 0.3),
+                    itemWidth: deviceSize.width * 0.35,
+                    layout: SwiperLayout.STACK,
+                    itemCount: 5,
+                    itemBuilder: (context, index) {
+                     
+                     var song= Provider.of<musicController>(context).randomSong();
+
+                     return favouriteCard(song: song[index]);
+                    },
+                  ))
             ],
           ),
         ),

@@ -260,7 +260,6 @@ class AudioPlayerHandler extends BaseAudioHandler with SeekHandler {
 
 
 
-
 List<AudioSource> songsSources=[];
 List<MediaItem> songsMedia=[];
   @override
@@ -273,6 +272,7 @@ List<MediaItem> songsMedia=[];
 
       var songs=ConcatenatingAudioSource(children: songsSources);
       _player.setAudioSource(songs);
+      
       mediaItem.add(songsMedia[0]);
     
   }

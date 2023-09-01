@@ -26,18 +26,23 @@ class songCard extends StatelessWidget {
               song.title,
               style: TextStyle(color: Colors.purple),
             )),
-            IconButton(
-                onPressed: () {
-                  Provider.of<musicController>(context, listen: false)
-                      .insertSong(song.id.toString());
-                },
-                icon: Icon(
-                  Icons.favorite,
-                  color: Provider.of<musicController>(context, listen: false)
-                          .isFavourite(song)
-                      ? Colors.red
-                      : Colors.white,
-                ))
+            Consumer<musicController>(
+              builder: (context, value, child) => IconButton(
+                  onPressed: () {
+                    if (value.isFavourite(song)) {
+                      value.deleteSong(song);
+                    } else {
+                      value.insertSong(song);
+                    }
+                  },
+                  icon: Icon(
+                    Icons.favorite,
+                    color: Provider.of<musicController>(context, listen: true)
+                            .isFavourite(song)
+                        ? Colors.red
+                        : Colors.white,
+                  )),
+            )
           ],
         )).asGlass();
   }
